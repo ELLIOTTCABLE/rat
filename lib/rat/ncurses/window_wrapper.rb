@@ -20,8 +20,9 @@ module Ncurses
       refresh
     end
     
-    def print string
-      @window.printw("%s", string)
+    def print *strings
+      string = strings.join
+      @window.printw("%s", string.scan(/.{1,#{@width}}/m))
     end
     
     def close

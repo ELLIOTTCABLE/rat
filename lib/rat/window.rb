@@ -44,9 +44,13 @@ module Rat
     end
     
     def << string
-      @scrollback << string
-      self.puts string
+      @scrollback << [Time.now, string]
+      self.puts "[#{timestamp @scrollback.last[0]}] #{string}"
       self
+    end
+    
+    def timestamp time
+      time.strftime('%H:%M')
     end
     
     def puts string
@@ -64,8 +68,8 @@ module Rat
     def reset
       clear
       @window.scrollok(true)
-      @scrollback.each do |line|
-        self.print(line + "\n") # Not using +#puts+, as that will refresh each
+      @scrollback.each do |time, line|
+        self.print("[#{timestamp time}] #{line}\n") # +#puts+ would refresh
       end
       refresh
     end
