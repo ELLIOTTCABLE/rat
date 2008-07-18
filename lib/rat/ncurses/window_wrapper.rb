@@ -15,14 +15,19 @@ module Ncurses
       @window.refresh
     end
     
-    def puts string, newline = "\n"
-      self.print(string + newline) if string
+    def puts string, indent = 0, newline = "\n"
+      self.print(string + newline, indent) if string
       refresh
     end
     
-    def print *strings
-      string = strings.join
-      @window.printw("%s", string.scan(/.{1,#{@width}}/m))
+    def print string, indent = 0
+      first = true # I WANT ARRAY#MAP_WITH_INDEX!
+      string = string.gsub(/.{1,#{@width - 1 - indent}}/m) do |sect|
+        sect = first ? sect : "\n" + (' ' * indent) + sect
+        first = false
+        sect
+      end
+      @window.printw("%s", string)
     end
     
     def close

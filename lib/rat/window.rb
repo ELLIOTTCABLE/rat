@@ -45,7 +45,8 @@ module Rat
     
     def << string
       @scrollback << [Time.now, string]
-      self.puts "[#{timestamp @scrollback.last[0]}] #{string}"
+      ts = "[#{timestamp @scrollback.last[0]}] "
+      self.puts ts + string, ts.length
       self
     end
     
@@ -53,8 +54,8 @@ module Rat
       time.strftime('%H:%M')
     end
     
-    def puts string
-      super string if active?
+    def puts *args
+      super *args if active?
     end
     
     # Fully clears a window's content, clearing the scrollback as well.
