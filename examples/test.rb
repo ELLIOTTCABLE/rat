@@ -1,29 +1,22 @@
 ($:.unshift File.expand_path(File.join( File.dirname(__FILE__), '..', 'lib' ))).uniq!
 
-require 'rubygems'
-require 'ncurses'
-require 'rat'
-
-Rat::Window.initialize
-
-at_exit do
-  Ncurses.endwin
-end
-
-@input = Rat::Input.new
-@input.scrollback = ["foo", "bar", "gaz"]
-@status = Ncurses::WindowWrapper.new 1, 10, Ncurses.LINES - 1, Ncurses.COLS - 10
-@debug = Ncurses::WindowWrapper.new 1, Ncurses.COLS, Ncurses.LINES - 2, 0
-@debug.refresh
-
-@output1 = Rat::Window.new
-@output2 = Rat::Window.new
-@output1.activate
-
-@debug.print "#{@input.buffer.inspect} (#{@input.index}/#{@input.scrollback.size - 1})\
- #{@input.scrollback.inspect}"
-
 begin
+  require 'rubygems'
+  require 'ncurses'
+  require 'rat'
+
+  Rat.start
+
+  @input = Rat::Input.instance
+  @output = Rat::Window.active
+
+  @status = Ncurses::WindowWrapper.new 1, 10, Ncurses.LINES - 1, Ncurses.COLS - 10
+  @debug = Ncurses::WindowWrapper.new 1, Ncurses.COLS, Ncurses.LINES - 2, 0
+  @debug.refresh
+
+  @debug.print "#{@input.buffer.inspect} (#{@input.index}/#{@input.scrollback.size - 1})\
+   #{@input.scrollback.inspect}"
+  
   while true
     input = Ncurses.getch
     
@@ -40,6 +33,12 @@ begin
       
     when 258 # Down arrow     ---- ---- ---- ---- ---- ---- ---- ---- ---- #
       @input.forward
+    
+    when 260 # Left arrow     ---- ---- ---- ---- ---- ---- ---- ---- ---- #
+      # TODO: Implement this
+      
+    when 261 # Right arrow    ---- ---- ---- ---- ---- ---- ---- ---- ---- #
+      # TODO: Implement this
       
     when ?\n # Line return    ---- ---- ---- ---- ---- ---- ---- ---- ---- #
       if @input.buffer =~ %r%^/%
@@ -69,6 +68,7 @@ begin
     end
     
   end
+  
 rescue Interrupt
   exit
 rescue StandardError => e

@@ -37,6 +37,10 @@ module Rat
     def initialize
       @scrollback = []
       
+      at_exit do
+        Ncurses.endwin
+      end
+      
       # height, width, top, left - defaults to all but one line tall
       super Ncurses.LINES - 2, Ncurses.COLS, 0, 0
       

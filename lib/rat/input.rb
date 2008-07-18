@@ -1,8 +1,10 @@
 module Rat
   class Input < Ncurses::WindowWrapper
     
-    class <<self; attr_reader :instance; end
     @@instance = nil
+    def self.instance
+      @@instance
+    end
     
     # Not to be confused with +Rat::Window+'s +scrollback+ variable, this is
     # for typing history ala irssi.
