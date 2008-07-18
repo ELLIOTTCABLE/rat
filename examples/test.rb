@@ -6,6 +6,10 @@ require 'rat'
 
 Rat::Window.initialize
 
+at_exit do
+  Ncurses.endwin
+end
+
 @input = Rat::Input.new
 @input.scrollback = ["foo", "bar", "gaz"]
 @status = Ncurses::WindowWrapper.new 1, 10, Ncurses.LINES - 1, Ncurses.COLS - 10
@@ -17,7 +21,7 @@ Rat::Window.initialize
 @output1.activate
 
 @debug.print "#{@input.buffer.inspect} (#{@input.index}/#{@input.scrollback.size - 1})\
- #{@input.scrollback.inspect} #{@output1.scrollback.inspect} #{@output2.scrollback.inspect}"
+ #{@input.scrollback.inspect}"
 
 begin
   while true
@@ -38,8 +42,15 @@ begin
       @input.forward
       
     when ?\n # Line return    ---- ---- ---- ---- ---- ---- ---- ---- ---- #
-      Rat::Window.active << @input.cycle
-      @input.reset
+      if @input.buffer =~ %r%^/%
+        command, arguments = @input.buffer.gsub(%r%^/%, '').match(/^(\w*)(?: (.*)$)?/)[1, 2]
+        command = Rat::Command[command.to_sym]
+        arguments ? command[*arguments.split(',')] : command[]
+        
+        @input.cycle
+      else
+        Rat::Window.active << @input.cycle
+      end
       
     else # Normal character   ---- ---- ---- ---- ---- ---- ---- ---- ---- #
       @input << input.chr
@@ -53,16 +64,13 @@ begin
       
       @debug.clear
       @debug.print "#{@input.buffer.inspect}\
- (#{@input.index}/#{@input.scrollback.size - 1}) #{@input.scrollback.inspect}\
- #{@output1.scrollback.inspect} #{@output2.scrollback.inspect}"
+ (#{@input.index}/#{@input.scrollback.size - 1}) #{@input.scrollback.inspect}"
       @debug.refresh
     end
     
   end
 rescue Interrupt
-  Ncurses.endwin
   exit
 rescue StandardError => e
-  Ncurses.endwin
   raise e
 end

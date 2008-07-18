@@ -1,4 +1,5 @@
 require 'rat/core_ext/rspec'
+require 'rat/command'
 require 'rat/ncurses/window_wrapper'
 require 'rat/window'
 require 'rat/input_window'
