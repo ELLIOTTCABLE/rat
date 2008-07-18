@@ -28,7 +28,7 @@ module Rat
     def [] *args
       raise ArgumentError,
         "Wrong number of arguments (#{args.size.to_s} for #{@block.arity.to_s})" unless
-        @block.arity < args.size
+        @block.arity <= args.size
       
       @block[*args]
     end
@@ -38,4 +38,17 @@ end
 Rat::Command.new(:exit) { exit }
 Rat::Command.new(:clear) { Rat::Window.active.clear }
 Rat::Command.new(:reset) { Rat::Window.active.reset }
-Rat::Command.new(:commands) { Rat::Window.active.puts Rat::Command.commands.map {|n,c|n.to_s}.sort.join(', ') }
+Rat::Command.new(:commands) { Rat::Window.active << "Commands: " + Rat::Command.commands.map {|n,c|n.to_s}.sort.join(', ') }
+Rat::Command.new(:windows) do
+  windows_list = Rat::Window.windows.map do |window|
+    index = Rat::Window.windows.index window
+    "#{window.name}[#{index}]"
+  end.join(' ')
+  Rat::Window.active << "Windows: (name[id]) #{windows_list}"
+end
+
+Rat::Command.new(:window) do |name|
+  window = Rat::Window.new name
+  index = Rat::Window.windows.index window
+  Rat::Window.active << "Window created: #{window.name}[#{index}]"
+end

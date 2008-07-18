@@ -15,7 +15,7 @@ module Rat
     # This forces InputWindow to be a psuedo-singleton class - creating a new
     # instance closes the last instance's window.
     def initialize
-      @@instance.close if @@instance
+      @@instance.terminate if @@instance
       @@instance = self
       
       @scrollback = []

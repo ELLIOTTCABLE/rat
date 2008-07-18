@@ -30,14 +30,14 @@ module Ncurses
       @window.printw("%s", string)
     end
     
-    def close
+    def terminate
       @window.delwin unless @window.destroyed?
     end
     
     # Re-creates the window itself, thus clearing all content. Optionally, can
     # subsequently fill the new window with new content.
     def clear(content = nil)
-      close if @window
+      terminate if @window
       @window = Ncurses.newwin(@height, @width, @top, @left)
       @window.keypad true
       self.print content if content

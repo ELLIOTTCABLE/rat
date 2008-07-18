@@ -10,12 +10,8 @@ begin
   @input = Rat::Input.instance
   @output = Rat::Window.active
 
-  @status = Ncurses::WindowWrapper.new 1, 10, Ncurses.LINES - 1, Ncurses.COLS - 10
-  @debug = Ncurses::WindowWrapper.new 1, Ncurses.COLS, Ncurses.LINES - 2, 0
-  @debug.refresh
-
-  @debug.print "#{@input.buffer.inspect} (#{@input.index}/#{@input.scrollback.size - 1})\
-   #{@input.scrollback.inspect}"
+  @statusbar = Ncurses::WindowWrapper.new 1, Ncurses.COLS - 10, Ncurses.LINES - 2, 0
+  @debug = Ncurses::WindowWrapper.new 1, 10, Ncurses.LINES - 2, Ncurses.COLS - 10
   
   while true
     input = Ncurses.getch
@@ -26,7 +22,13 @@ begin
       @input.reset
 
     when 27 # Escape          ---- ---- ---- ---- ---- ---- ---- ---- ---- #
-      @output1.active? ? @output2.activate : @output1.activate
+      index = Rat::Window.windows.index Rat::Window.active
+      index += 1
+      if Rat::Window.windows.size == index
+        index = 0
+      end
+      window = Rat::Window.windows[index]
+      window.activate
       
     when 259 # Up arrow       ---- ---- ---- ---- ---- ---- ---- ---- ---- #
       @input.back
@@ -56,15 +58,15 @@ begin
     end
     
     if true # Debug!          ---- ---- ---- ---- ---- ---- ---- ---- ---- #
-      @status.clear
-      char = input.chr rescue '??'
-      @status.print "#{input}:#{char}"
-      @status.refresh
-      
       @debug.clear
-      @debug.print "#{@input.buffer.inspect}\
- (#{@input.index}/#{@input.scrollback.size - 1}) #{@input.scrollback.inspect}"
+      char = input.chr rescue '??'
+      @debug.print "#{input}:#{char}"
       @debug.refresh
+      
+      @statusbar.clear
+      @statusbar.print "#{@input.buffer.inspect}\
+ (#{@input.index}/#{@input.scrollback.size - 1}) #{@input.scrollback.inspect}"
+      @statusbar.refresh
     end
     
   end
