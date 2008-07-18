@@ -17,7 +17,7 @@ begin
     input = Ncurses.getch
     
     case input
-    when 263 # Backspace      ---- ---- ---- ---- ---- ---- ---- ---- ---- #
+    when 127, 263 # Backspace    ---- ---- ---- ---- ---- ---- ---- ---- #
       @input.buffer = @input.buffer[0..-2] # Strip the last character
       @input.reset
 
