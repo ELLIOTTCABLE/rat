@@ -37,4 +37,5 @@ end
 
 Rat::Command.new(:exit) { exit }
 Rat::Command.new(:clear) { Rat::Window.active.clear }
+Rat::Command.new(:reset) { Rat::Window.active.reset }
 Rat::Command.new(:commands) { Rat::Window.active.puts Rat::Command.commands.map {|n,c|n.to_s}.sort.join(', ') }
