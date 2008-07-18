@@ -5,7 +5,7 @@ require 'rat/window'
 require 'rat/input_window'
 
 module Rat
-  Version = 0
+  Version = -1
   
   # The primary method. Initiates the application loop, and takes over the
   # terminal.
