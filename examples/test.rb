@@ -2,7 +2,6 @@
 
 begin
   require 'rubygems'
-  require 'ncurses'
   require 'rat'
 
   Rat.start
@@ -22,13 +21,7 @@ begin
       @input.reset
 
     when 27 # Escape          ---- ---- ---- ---- ---- ---- ---- ---- ---- #
-      index = Rat::Window.windows.index Rat::Window.active
-      index += 1
-      if Rat::Window.windows.size == index
-        index = 0
-      end
-      window = Rat::Window.windows[index]
-      window.activate
+      Rat::Command.hotkey(Ncurses.getch)
       
     when 259 # Up arrow       ---- ---- ---- ---- ---- ---- ---- ---- ---- #
       @input.back
