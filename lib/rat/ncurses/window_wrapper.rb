@@ -1,5 +1,3 @@
-require 'ncurses'
-
 module Ncurses
   class WindowWrapper
     

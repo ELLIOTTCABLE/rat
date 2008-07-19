@@ -1,3 +1,7 @@
+require 'ncurses'
+require 'xmpp4r'
+require 'xmpp4r/roster'
+
 require 'rat/core_ext/rspec'
 require 'rat/command'
 require 'rat/ncurses/window_wrapper'
