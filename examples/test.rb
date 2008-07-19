@@ -44,7 +44,7 @@ begin
       
     when ?\n # Line return    ---- ---- ---- ---- ---- ---- ---- ---- ---- #
       if @input.buffer =~ %r%^/%
-        command, arguments = @input.buffer.gsub(%r%^/%, '').match(/^(\w*)(?: (.*)$)?/)[1, 2]
+        command, arguments = @input.buffer.gsub(%r%^/%, '').match(/^(\w*)(?:\s+(.*))?/)[1, 2]
         command = Rat::Command[command.to_sym]
         arguments ? command[*arguments.split(',')] : command[]
         
