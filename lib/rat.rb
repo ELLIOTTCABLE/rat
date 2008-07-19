@@ -1,7 +1,9 @@
+require 'rubygems'
 require 'ncurses'
 require 'xmpp4r'
 require 'xmpp4r/roster'
 
+require 'rat/core_ext/kernel'
 require 'rat/core_ext/rspec'
 require 'rat/command'
 require 'rat/ncurses/window_wrapper'
@@ -21,6 +23,9 @@ module Rat
     Rat::Input.new # Rat::Input.instance
     Rat::Window.new # Rat::Window.active (for now)
     
+    forever { Rat::Input.process Ncurses.getch }
   end
   
 end
+
+Rat::Command.new(:exit) { exit }

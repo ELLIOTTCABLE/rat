@@ -8,32 +8,27 @@ module Rat
     
     # Returns the +Command+ with the given name.
     def self.[] name
-      if @@commands.include? name
-        @@commands[name]
+      if @@commands.include? name.to_sym
+        @@commands[name.to_sym]
       else
-        lambda { Rat::Window.active.puts "Unknown command" }
+        lambda { Rat::Window.active.puts "Unknown command '#{name}'" }
       end
     end
     
-    # TODO: Rework this to use a hash instead of a case
+    @@hotkeys = {}
+    def self.hotkeys
+      @@hotkeys
+    end
+    
     def self.hotkey key
+      key = @@hotkeys[key]
+      raise ArgumentError, 'No such hotkey' unless key
+      
       case key
-      when 260 # Left arrow
-        index = Rat::Window.windows.index Rat::Window.active
-        index += 1
-        index = 0 if Rat::Window.windows.size == index
-        Rat::Window.windows[index].activate
-        
-      when 261 # Right arrow
-        index = Rat::Window.windows.index Rat::Window.active
-        index = Rat::Window.windows.size if 0 == index
-        index -= 1
-        Rat::Window.windows[index].activate
-        
-      when 48..57 # Number keys
-        window = Rat::Window.windows[key.chr.to_i]
-        window.activate if window
-        
+      when Proc
+        key.call
+      else
+        @@commands[key].call
       end
     end
     
@@ -41,12 +36,12 @@ module Rat
     attr_accessor :block
     
     def initialize name, &block
-      @name = name
+      @name = name.to_sym
       @block = block
-      @@commands[name] = self
+      @@commands[name.to_sym] = self
     end
     
-    # Runs the command with arguments
+    # Runs self with arguments
     def call *args
       case @block.arity
       when 1..999   # Normal arguments
@@ -64,7 +59,7 @@ module Rat
       when -999..-2 # x-1 arguments plus a splat argument
         raise ArgumentError,
           "Wrong number of arguments (#{args.size.to_s} for #{(-@block.arity - 1).to_s}+)" unless
-          args.size >= -@block.arity
+          args.size >= (-@block.arity) - 1
         @block[*args]
       end
     end
@@ -73,22 +68,20 @@ module Rat
   end
 end
 
-Rat::Command.new(:exit) { exit }
-Rat::Command.new(:clear) { Rat::Window.active.clear }
-Rat::Command.new(:reset) { Rat::Window.active.reset }
 Rat::Command.new(:commands) { Rat::Window.active << "Commands: " + Rat::Command.commands.map {|n,c|n.to_s}.sort.join(', ') }
-Rat::Command.new :window_list do
-  windows_list = Rat::Window.windows.map do |window|
-    index = Rat::Window.windows.index window
-    "#{window.name}[#{index}]"
-  end.join(' ')
-  Rat::Window.active << "Windows: (name[id]) #{windows_list}"
-end
 
-Rat::Command.new :window_new do |name|
-  Rat::Window.new name
-end
-
-Rat::Command.new :window do |command, *args|
-  Rat::Command[['window', command].join('_')][*args]
+# TODO: Rework this. I really don't like what it prints, we need an inbuilt
+# documentation/help system for commands and hotkeys. Oh, and an array to
+# match numeric characters with english phrases - nobody knows what ^(260) is.
+Rat::Command.new(:hotkeys) do
+  Rat::Window.active << "Hotkeys: " + Rat::Command.hotkeys.map do |key, command|
+    char = key.chr rescue "(#{key.to_s})"
+    comm = case command
+    when Symbol, String
+      '/' + command.to_s
+    when Proc
+      '(Script)'
+    end
+    "^#{char} => #{comm}"
+  end.sort.join(', ')
 end

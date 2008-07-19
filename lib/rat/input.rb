@@ -6,6 +6,43 @@ module Rat
       @@instance
     end
     
+    def self.process key
+      case key
+      when 127, 263 # Backspace    ---- ---- ---- ---- ---- ---- ---- ---- #
+        @@instance.buffer = @@instance.buffer[0..-2] # Strip the last character
+        @@instance.reset
+
+      when 27 # Escape          ---- ---- ---- ---- ---- ---- ---- ---- ---- #
+        Rat::Command.hotkey Ncurses.getch
+
+      when 259 # Up arrow       ---- ---- ---- ---- ---- ---- ---- ---- ---- #
+        @@instance.back
+
+      when 258 # Down arrow     ---- ---- ---- ---- ---- ---- ---- ---- ---- #
+        @@instance.forward
+
+      when 260 # Left arrow     ---- ---- ---- ---- ---- ---- ---- ---- ---- #
+        # TODO: Implement this
+
+      when 261 # Right arrow    ---- ---- ---- ---- ---- ---- ---- ---- ---- #
+        # TODO: Implement this
+
+      when ?\n # Line return    ---- ---- ---- ---- ---- ---- ---- ---- ---- #
+        if @@instance.buffer =~ %r%^/%
+          command, arguments = @@instance.buffer.gsub(%r%^/%, '').match(/^(\w*)(?:\s+(.*))?/)[1, 2]
+          command = Rat::Command[command.to_sym]
+          arguments ? command[*arguments.split(',')] : command[]
+
+          @@instance.cycle
+        else
+          Rat::Window.active << @@instance.cycle
+        end
+
+      else # Normal character   ---- ---- ---- ---- ---- ---- ---- ---- ---- #
+        @@instance << key.chr
+      end
+    end
+    
     # Not to be confused with +Rat::Window+'s +scrollback+ variable, this is
     # for typing history ala irssi.
     attr_accessor :scrollback
@@ -23,7 +60,7 @@ module Rat
       @index = nil
       
       # height, width, top, left - defaults to one line tall
-      super 1, Ncurses.COLS - 10, Ncurses.LINES - 1, 0
+      super 1, Ncurses.COLS, Ncurses.LINES - 1, 0
     end
     
     # Concatenates a string to the end of the current buffer.
