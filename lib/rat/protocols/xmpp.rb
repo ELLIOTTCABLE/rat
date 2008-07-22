@@ -1,16 +1,23 @@
 require 'xmpp4r'
 require 'xmpp4r/roster'
 
+# Jabber::logger = Logger.new(STDERR)
+Jabber::logger = Logger.new('jabberlog.txt')
+Jabber::logger.level = Logger::DEBUG
+Jabber::logger.datetime_format = "%Y-%m-%d|%H:%M:%S"
+Jabber::debug = true
+
 class Rat::Protocol::XMPP < Rat::Protocol::Base
   def self.initialize
     super
     `say "protocol initialized"`
-    @@XMPP = Jabber::Client.new(Jabber::JID.new('elliottcable@gmail.com/rat'))
+    @@XMPP = Jabber::Client.new(Jabber::JID.new('elliottcable.testing@gmail.com/rat'))
     @@XMPP.connect.auth('secret')
     @@XMPP.send Jabber::Presence.new.set_type(:available).set_priority(50)
     
     @@XMPP.add_message_callback do |message|
       `say "message received #{message.body}"`
+      Rat::Window.active.puts message.body
     end
   end
   
@@ -25,11 +32,13 @@ class Rat::Protocol::XMPP < Rat::Protocol::Base
     super window, target
     
     # @@XMPP.add_message_callback do |message|
-    #       `say "message received"`
-    #       # if message.from =~ /#{target}/
-    #         @window << "#{message.from} > #{message.body}"
-    #       # end
-    #     end
+    #   `say "message received"`
+    #   # if message.from =~ /#{target}/
+    #     @window << "#{message.from} > #{message.body}"
+    #   # end
+    # end
+    
+    $IGNORE_INPUT = true
   end
   
   def << message

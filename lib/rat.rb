@@ -9,6 +9,8 @@ require 'rat/ncurses'
 require 'rat/window'
 require 'rat/input'
 
+$IGNORE_INPUT = false
+
 module Rat
   Version = -1
   
@@ -22,7 +24,9 @@ module Rat
     Rat::Input.new
     Rat::Window.new :none, :main
     
-    forever { Rat::Input.process Ncurses.getch }
+    forever do
+      Rat::Input.process Ncurses.getch unless $IGNORE_INPUT
+    end
   end
   
 end

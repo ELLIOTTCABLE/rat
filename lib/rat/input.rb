@@ -39,7 +39,8 @@ module Rat
         end
 
       else # Normal character   ---- ---- ---- ---- ---- ---- ---- ---- ---- #
-        @@instance << key.chr
+        char = key.chr rescue "(#{key.to_s})"
+        @@instance << char
       end
     end
     
