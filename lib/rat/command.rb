@@ -44,7 +44,7 @@ module Rat
     # Runs self with arguments
     def call *args
       case @block.arity
-      when 1..999   # Normal arguments
+      when 1..Infinity   # Normal arguments
         raise ArgumentError,
           "Wrong number of arguments (#{args.size.to_s} for #{@block.arity.to_s})" unless
           args.size == @block.arity
@@ -56,7 +56,7 @@ module Rat
           args.size == 0
         @block.call
         
-      when -999..-2 # x-1 arguments plus a splat argument
+      when -Infinity..-2 # x-1 arguments plus a splat argument
         raise ArgumentError,
           "Wrong number of arguments (#{args.size.to_s} for #{(-@block.arity - 1).to_s}+)" unless
           args.size >= (-@block.arity) - 1
