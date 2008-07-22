@@ -1,11 +1,11 @@
 require 'rubygems'
 require 'ncurses'
-require 'xmpp4r'
-require 'xmpp4r/roster'
 
 require 'rat/core_ext/kernel'
 require 'rat/core_ext/rspec'
+require 'rat/core_ext/string'
 require 'rat/command'
+require 'rat/protocol'
 require 'rat/ncurses/window_wrapper'
 require 'rat/window'
 require 'rat/input'
@@ -20,8 +20,8 @@ module Rat
     Window::initialize
     
     # Next, we need a few windows.
-    Rat::Input.new # Rat::Input.instance
-    Rat::Window.new # Rat::Window.active (for now)
+    Rat::Input.new
+    Rat::Window.new :none, :main
     
     forever { Rat::Input.process Ncurses.getch }
   end

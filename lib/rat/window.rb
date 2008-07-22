@@ -37,19 +37,37 @@ module Rat
     end
     
     attr_reader :scrollback
-    attr_accessor :name
+    attr_accessor :target
+    attr_accessor :protocol
     
-    def initialize name = ""
+    def initialize protocol = nil, target = nil
       raise 'You must initialize the environment first!' unless @@initialized
       @scrollback = []
-      @name = name
+      @target = target
       
       # height, width, top, left - defaults to all but one line tall
       super Ncurses.LINES - 1, Ncurses.COLS, 0, 0
       
       @@windows << self
       
+      @protocol = case protocol
+      when Symbol, String, nil
+        protocol = protocol.nil? ? :none : protocol.to_sym
+        protocol = protocol.to_s.constantize
+        protocol = Rat::Protocol.const_get protocol
+        protocol.initialize unless protocol.initialized?
+        protocol.new self, @target
+      else
+        raise ArgumentError, 'Only accepts a symbol or an instance of a protocol' unless
+          protocol.class.ancestors.include? Rat::Protocol
+        protocol
+      end
+      
       activate
+    end
+    
+    def index
+      Rat::Window.windows.index self
     end
     
     def active?
@@ -108,10 +126,12 @@ Rat::Command.new :window do |command, *args|
   Rat::Command[['window', command].join('_')][*args]
 end
 
-Rat::Command.new :window_new do |*name|
-  raise ArgumentError, "Wrong number of arguments (#{name.size} for one)" unless name.size < 1
-  
-  name.size.zero? ? Rat::Window.new : Rat::Window.new(name.first)
+Rat::Command.new :window_new do |*args|
+  raise ArgumentError, "Wrong number of arguments (#{args.size} for two-)" unless args.size <= 2
+  protocol = args[0]
+  target = args[1]
+  window = Rat::Window.new(protocol, target)
+  window.puts args.inspect
 end
 
 Rat::Command.new :window_show do |num|
@@ -119,30 +139,34 @@ Rat::Command.new :window_show do |num|
   window.activate if window
 end
 
+Rat::Command.new :window_info do ||
+  w = Rat::Window.active
+  w << "#{w.protocol.class.to_s} #{w.target}[#{w.index}]"
+end
+
 (?0..?9).each {|n| Rat::Command.hotkeys[n] = lambda { Rat::Command[:window_show][n.chr] } } # Number keys
-Rat::Command.new :window_list do
+Rat::Command.new :window_list do ||
   windows_list = Rat::Window.windows.map do |window|
-    index = Rat::Window.windows.index window
-    "#{window.name}[#{index}]"
+    "#{window.target}[#{window.index}]"
   end.join(' ')
-  Rat::Window.active << "Windows: (name[id]) #{windows_list}"
+  Rat::Window.active << "Windows: (target[id]) #{windows_list}"
 end
 
 Rat::Command.hotkeys[260] = :window_next # Right arrow key
-Rat::Command.new :window_next do
-  index = Rat::Window.windows.index Rat::Window.active
+Rat::Command.new :window_next do ||
+  index = Rat::Window.active.index
   index += 1
   index = 0 if Rat::Window.windows.size == index
   Rat::Window.windows[index].activate
 end
 
 Rat::Command.hotkeys[261] = :window_previous # Left arrow key
-Rat::Command.new :window_previous do
-  index = Rat::Window.windows.index Rat::Window.active
+Rat::Command.new :window_previous do ||
+  index = Rat::Window.active.index
   index = Rat::Window.windows.size if 0 == index
   index -= 1
   Rat::Window.windows[index].activate
 end
 
-Rat::Command.new(:window_clear) { Rat::Window.active.clear }
-Rat::Command.new(:window_reset) { Rat::Window.active.reset }
+Rat::Command.new(:window_clear) {|| Rat::Window.active.clear }
+Rat::Command.new(:window_reset) {|| Rat::Window.active.reset }

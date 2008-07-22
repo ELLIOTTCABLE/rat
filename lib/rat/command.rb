@@ -50,7 +50,7 @@ module Rat
           args.size == @block.arity
         @block[*args]
         
-      when -1, 0    # No arguments no bars { }, no arguments with bars {|| }
+      when 0        # No arguments with bars {|| }
         raise ArgumentError,
           "Wrong number of arguments (#{args.size.to_s} for none)" unless
           args.size == 0
@@ -61,6 +61,12 @@ module Rat
           "Wrong number of arguments (#{args.size.to_s} for #{(-@block.arity - 1).to_s}+)" unless
           args.size >= (-@block.arity) - 1
         @block[*args]
+      
+      when -1       # Arguments handeled on-board {|*args| }, or ignore all args {}
+        # Not going to raise any errors, this is the wildcard for script
+        # kiddies
+        @block[*args]
+        
       end
     end
     

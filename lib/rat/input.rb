@@ -31,11 +31,11 @@ module Rat
         if @@instance.buffer =~ %r%^/%
           command, arguments = @@instance.buffer.gsub(%r%^/%, '').match(/^(\w*)(?:\s+(.*))?/)[1, 2]
           command = Rat::Command[command.to_sym]
-          arguments ? command[*arguments.split(',')] : command[]
+          arguments ? command[*arguments.split(' ')] : command.call
 
           @@instance.cycle
         else
-          Rat::Window.active << @@instance.cycle
+          Rat::Window.active.protocol << @@instance.cycle
         end
 
       else # Normal character   ---- ---- ---- ---- ---- ---- ---- ---- ---- #
