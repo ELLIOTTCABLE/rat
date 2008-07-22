@@ -1,0 +1,1 @@
+require 'rat/protocols/xmpp'

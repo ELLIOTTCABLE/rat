@@ -1,13 +1,11 @@
 require 'rubygems'
 require 'ncurses'
 
-require 'rat/core_ext/kernel'
-require 'rat/core_ext/rspec'
-require 'rat/core_ext/string'
+require 'rat/core_ext'
 require 'rat/command'
 require 'rat/protocol'
-require 'rat/protocols/xmpp'
-require 'rat/ncurses/window_wrapper'
+require 'rat/protocols'
+require 'rat/ncurses'
 require 'rat/window'
 require 'rat/input'
 
