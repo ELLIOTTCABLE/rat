@@ -8,25 +8,28 @@ module Rat
     
     def self.process key
       case key
-      when 127, 263 # Backspace    ---- ---- ---- ---- ---- ---- ---- ---- #
-        @@instance.buffer = @@instance.buffer[0..-2] # Strip the last character
-        @@instance.reset
-
+      when Ncurses::KEY_RESIZE # SIGWINCH - window resized
+        # TODO: Implement this
+        
       when 27 # Escape          ---- ---- ---- ---- ---- ---- ---- ---- ---- #
         Rat::Command.hotkey Ncurses.getch
-
+        
+      when 127, 263 # Backspace      ---- ---- ---- ---- ---- ---- ---- ---- #
+        @@instance.buffer = @@instance.buffer[0..-2] # Strip the last character
+        @@instance.reset
+        
       when 259 # Up arrow       ---- ---- ---- ---- ---- ---- ---- ---- ---- #
         @@instance.back
-
+        
       when 258 # Down arrow     ---- ---- ---- ---- ---- ---- ---- ---- ---- #
         @@instance.forward
-
+        
       when 260 # Left arrow     ---- ---- ---- ---- ---- ---- ---- ---- ---- #
         # TODO: Implement this
-
+        
       when 261 # Right arrow    ---- ---- ---- ---- ---- ---- ---- ---- ---- #
         # TODO: Implement this
-
+        
       when ?\n # Line return    ---- ---- ---- ---- ---- ---- ---- ---- ---- #
         if @@instance.buffer =~ %r%^/%
           command, arguments = @@instance.buffer.gsub(%r%^/%, '').match(/^(\w*)(?:\s+(.*))?/)[1, 2]
@@ -37,8 +40,9 @@ module Rat
         else
           Rat::Window.active.protocol << @@instance.cycle
         end
-
+        
       else # Normal character   ---- ---- ---- ---- ---- ---- ---- ---- ---- #
+        return if key == -1 # Dunno what causes these, but let's get rid of them
         char = key.chr rescue "(#{key.to_s})"
         @@instance << char
       end
