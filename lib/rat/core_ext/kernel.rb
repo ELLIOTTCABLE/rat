@@ -1,7 +1,6 @@
 module Kernel
   def forever &block
-    block ||= lambda {}
-    __forever__(&block)
+    __forever__(&block ||= lambda {})
   end
   
   def __forever__
