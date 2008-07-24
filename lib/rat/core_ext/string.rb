@@ -8,4 +8,8 @@ class String
     str = str.gsub(/(^|_)(\w)/) { "#{$2.capitalize}" }
   end
   
+  def /(o)
+    File.join(self, o.to_s)
+  end
+  
 end
