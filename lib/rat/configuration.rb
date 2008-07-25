@@ -27,6 +27,25 @@ module Rat
           super key, value
         end
       end
+      
+      # Recursively converts a setting category to a plain hash. Ignores any
+      # setting that hasn't changed from its default value.
+      def to_hash
+        inject(Hash.new) do |hash, (key, item)|
+          case item
+          when Rat::Configuration::Setting
+            hash[key] = item.value unless item.default?
+            
+          when Rat::Configuration::Category
+            hash[key] = item.to_hash
+            
+          else
+            hash[key] = item
+          end
+          
+          hash
+        end
+      end
     end
     
     class Setting
@@ -59,6 +78,10 @@ module Rat
         @value = @default
       end
       
+      def default?
+        !@is_set
+      end
+      
       attr_accessor :value
       
       # Sets the value of the setting
@@ -85,6 +108,7 @@ module Rat
         cat = category! @categories
         raise 'there is already a category or setting key by that name' if cat.include? key
         cat[key] = self
+        @categories.freeze
       end
       
       private
