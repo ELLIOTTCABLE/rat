@@ -22,7 +22,7 @@ module Rat
     end
     
     # Predicate, determines if the windowing environment has been initialized
-    def initialized?
+    def self.initialized?
       @@initialized
     end
     
