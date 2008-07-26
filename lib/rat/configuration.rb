@@ -1,3 +1,5 @@
+require 'yaml'
+
 module Rat
   # Contains a single nested Rat::Configuration::Category (a gorified hash, an
   # array of Rat::Configuration::Setting) instances. Each instance has a key,
@@ -12,6 +14,17 @@ module Rat
         contents
       end
       
+      # Like Hash#[], but takes a linear path of sub-categories as an
+      # argument, and recursively queries those categories
+      def get key, categories = []
+        if categories.empty?
+          fetch key
+        else
+          cat = categories.shift
+          fetch(cat).get(key, categories)
+        end
+      end
+      
       # Like Hash#[]=, but sets the *value* of the object instead of the
       # object if the object is a Rat::Configuration::Setting
       def []= key, value
@@ -21,23 +34,27 @@ module Rat
         rescue IndexError
           nil
         end
+        case
         if old_contents.is_a? Rat::Configuration::Setting
            old_contents.value = value
         else
-          super key, value
+          super key, Configuration::Setting.new(key) {|c| c.value = item }
         end
       end
       
       # Recursively converts a setting category to a plain hash. Ignores any
-      # setting that hasn't changed from its default value.
+      # setting that hasn't changed from its default value, and empty
+      # categories.
       def to_hash
+        
         inject(Hash.new) do |hash, (key, item)|
           case item
           when Rat::Configuration::Setting
             hash[key] = item.value unless item.default?
             
           when Rat::Configuration::Category
-            hash[key] = item.to_hash
+            item = item.to_hash
+            hash[key] = item unless item.empty?
             
           else
             hash[key] = item
@@ -45,13 +62,36 @@ module Rat
           
           hash
         end
+        
+      end
+      
+      # Recursively converts a plain hash to settings categories and settings
+      # values.
+      def self.from_hash(hash)
+        
+        hash.inject(new) do |h, (key, item)|
+          case item
+          when Hash
+            h[key] = from_hash item
+            
+          else
+            # See +#[]=+
+            h[key] = item
+          end
+        end
+        
       end
     end
     
     class Setting
-      # Retrieves either a key or a category
+      # See +Rat::Configuration::Category#[]+
       def self.[] key
         Rat::Configuration::settings[key]
+      end
+      
+      # See +Rat::Configuration::Category#[]=+
+      def self.[]= key, value
+        Rat::Configuration::settings[key] = value
       end
       
       # The 'name' of the setting, is used in all references to it. Should be
@@ -78,16 +118,17 @@ module Rat
         @value = @default
       end
       
-      def default?
-        !@is_set
-      end
+      def default?; !@is_set; end
+      def set?; @is_set; end
       
+      # The current value of the setting; i.e. what it is currently 'set' to
       attr_accessor :value
       
       # Sets the value of the setting
-      def value= new_value
+      def value= value
+        raise ArgumentError, 'a setting can\'t be set to a Setting!' if value.is_a? Configuration::Setting
         @is_set = true
-        @value = new_value
+        @value = value
       end
       
       # Creates a new configuration variable. Takes a key (like in a normal
@@ -95,6 +136,8 @@ module Rat
       # (like a default value or categories).
       def initialize key
         key, categories = parse key
+        
+        
         
         @key = key
         @categories = categories
@@ -104,6 +147,8 @@ module Rat
         @is_set = false
         
         yield self if block_given?
+        
+        default!
         
         cat = category! @categories
         raise 'there is already a category or setting key by that name' if cat.include? key
@@ -164,17 +209,45 @@ module Rat
       # Dumps current configuration to a file. Doesn't save any default
       # setting, doesn't save any empty categories.
       # TODO: Implement this
-      def dump file
-        
+      def dump filename
+        File.open(filename, File::WRONLY|File::TRUNC|File::CREAT) do |file|
+          file.puts YAML::dump(@@settings.to_hash)
+        end
       end
       
       # Imports configuration from a file. (See +::dump+.)
       # TODO: Implement this
-      def import file
-        
+      def load filename
+        File.open(filename, File::RDONLY|File::CREAT) do |file|
+          from_hash YAML::load(file.read)
+        end
       end
       
     end
   end
 
 end
+
+# -- -- -- -- ! -- -- -- -- #
+# Some stuff while I test...
+# Note to self: Remember not to commit this!
+
+include Rat
+Configuration::Setting.new :foo
+Configuration::Setting.new :bar do |setting|
+  setting.default = "arf! arf!"
+end
+Configuration::Setting.new :gaz do |setting|
+  setting.default = 42.42
+end
+Configuration::Setting.new "omg/lol"
+Configuration::Setting.new :wtf do |setting|
+  setting.default = [127, 0, 0, 1]
+  setting.categories << :omg
+end
+
+# Configuration::Setting[:foo] = "lol, woot!"
+# Configuration::Setting[:bar] = "Day Break is pretty full of win"
+# Configuration::Setting[:gaz] = 1337
+# Configuration::Setting[:omg][:wtf] = :categorized
+# Configuration::Setting[:omg][:lol] = "also_categorized"
