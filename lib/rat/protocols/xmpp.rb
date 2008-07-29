@@ -12,8 +12,8 @@ class Rat::Protocol::XMPP < Rat::Protocol::Base
     super
     `say "protocol initialized"`
     @@XMPP = Jabber::Client.new(Jabber::JID.new('elliottcable.testing@gmail.com/rat'))
-    @@XMPP.connect.auth('secret')
-    @@XMPP.send Jabber::Presence.new.set_type(:available).set_priority(50)
+    @@XMPP.connect.auth('sekretlol')
+    @@XMPP.send Jabber::Presence.new.set_type(:available).set_priority(123)
     
     @@XMPP.add_message_callback do |message|
       `say "message received #{message.body}"`
@@ -37,8 +37,6 @@ class Rat::Protocol::XMPP < Rat::Protocol::Base
     #     @window << "#{message.from} > #{message.body}"
     #   # end
     # end
-    
-    $IGNORE_INPUT = true
   end
   
   def << message

@@ -55,7 +55,6 @@ module Rat
         protocol = protocol.nil? ? :none : protocol.to_sym
         protocol = protocol.to_s.constantize
         protocol = Rat::Protocol.const_get protocol
-        protocol.initialize unless protocol.initialized?
         protocol.new self, @target
       else
         raise ArgumentError, 'Only accepts a symbol or an instance of a protocol' unless
