@@ -10,25 +10,22 @@ Jabber::debug = true
 class Rat::Protocol::XMPP < Rat::Protocol::Base
   def self.initialize
     super
-    `say "protocol initialized"`
     @@XMPP = Jabber::Client.new(Jabber::JID.new('elliottcable.testing@gmail.com/rat'))
     @@XMPP.connect.auth('sekretlol')
     @@XMPP.send Jabber::Presence.new.set_type(:available).set_priority(123)
     
+    # For now, for testing reasons, we're going to attempt to display this wherever possible.
     @@XMPP.add_message_callback do |message|
-      `say "message received #{message.body}"`
-      Rat::Window.active.puts message.body
+      STDERR.puts message.body
     end
   end
   
   def self.terminate
-    `say "protocol terminating"`
     @@XMPP.close
     super
   end
   
   def initialize window, target
-    `say "protocol instance initialized"`
     super window, target
     
     # @@XMPP.add_message_callback do |message|
@@ -40,7 +37,6 @@ class Rat::Protocol::XMPP < Rat::Protocol::Base
   end
   
   def << message
-    `say "sending message"`
     @@XMPP.send Jabber::Message.new(
       @target,
       message
