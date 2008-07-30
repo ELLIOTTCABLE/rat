@@ -1,4 +1,3 @@
-require 'rubygems'
 require 'ncurses'
 
 require 'rat/core_ext'
