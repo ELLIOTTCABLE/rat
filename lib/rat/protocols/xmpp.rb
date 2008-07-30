@@ -2,7 +2,7 @@ require 'xmpp4r'
 require 'xmpp4r/roster'
 
 # Jabber::logger = Logger.new(STDERR)
-Jabber::logger = Logger.new('jabberlog.txt')
+Jabber::logger = Logger.new('logs/jabber.log')
 Jabber::logger.level = Logger::DEBUG
 Jabber::logger.datetime_format = "%Y-%m-%d|%H:%M:%S"
 Jabber::debug = true
