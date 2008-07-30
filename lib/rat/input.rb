@@ -12,7 +12,7 @@ module Rat
         # TODO: Implement this
         
       when 27 # Escape          ---- ---- ---- ---- ---- ---- ---- ---- ---- #
-        Rat::Command.hotkey Ncurses.getch
+        Command.hotkey Ncurses.getch
         
       when 127, 263 # Backspace      ---- ---- ---- ---- ---- ---- ---- ---- #
         @@instance.buffer = @@instance.buffer[0..-2] # Strip the last character
@@ -33,12 +33,12 @@ module Rat
       when ?\n # Line return    ---- ---- ---- ---- ---- ---- ---- ---- ---- #
         if @@instance.buffer =~ %r%^/%
           command, arguments = @@instance.buffer.gsub(%r%^/%, '').match(/^(\w*)(?:\s+(.*))?/)[1, 2]
-          command = Rat::Command[command.to_sym]
+          command = Command[command.to_sym]
           arguments ? command[*arguments.split(' ')] : command.call
 
           @@instance.cycle
         else
-          Rat::Window.active.protocol << @@instance.cycle
+          Window.active.protocol << @@instance.cycle
         end
         
       else # Normal character   ---- ---- ---- ---- ---- ---- ---- ---- ---- #
@@ -48,7 +48,7 @@ module Rat
       end
     end
     
-    # Not to be confused with +Rat::Window+'s +scrollback+ variable, this is
+    # Not to be confused with +Window+'s +scrollback+ variable, this is
     # for typing history ala irssi.
     attr_accessor :scrollback
     attr_accessor :buffer

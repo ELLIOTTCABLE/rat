@@ -11,7 +11,7 @@ module Rat
       if @@commands.include? name.to_sym
         @@commands[name.to_sym]
       else
-        lambda { Rat::Window.active.puts "Unknown command '#{name}'" }
+        lambda { Window.active.puts "Unknown command '#{name}'" }
       end
     end
     
@@ -72,22 +72,22 @@ module Rat
     
     alias_method :[], :call
   end
-end
+  
+  Command.new(:commands) { Window.active << "Commands: " + Command.commands.map {|n,c|n.to_s}.sort.join(', ') }
 
-Rat::Command.new(:commands) { Rat::Window.active << "Commands: " + Rat::Command.commands.map {|n,c|n.to_s}.sort.join(', ') }
-
-# TODO: Rework this. I really don't like what it prints, we need an inbuilt
-# documentation/help system for commands and hotkeys. Oh, and an array to
-# match numeric characters with english phrases - nobody knows what ^(260) is.
-Rat::Command.new(:hotkeys) do
-  Rat::Window.active << "Hotkeys: " + Rat::Command.hotkeys.map do |key, command|
-    char = key.chr rescue "(#{key.to_s})"
-    comm = case command
-    when Symbol, String
-      '/' + command.to_s
-    when Proc
-      '(Script)'
-    end
-    "^#{char} => #{comm}"
-  end.sort.join(', ')
+  # TODO: Rework this. I really don't like what it prints, we need an inbuilt
+  # documentation/help system for commands and hotkeys. Oh, and an array to
+  # match numeric characters with english phrases - nobody knows what ^(260) is.
+  Command.new(:hotkeys) do
+    Window.active << "Hotkeys: " + Command.hotkeys.map do |key, command|
+      char = key.chr rescue "(#{key.to_s})"
+      comm = case command
+      when Symbol, String
+        '/' + command.to_s
+      when Proc
+        '(Script)'
+      end
+      "^#{char} => #{comm}"
+    end.sort.join(', ')
+  end
 end

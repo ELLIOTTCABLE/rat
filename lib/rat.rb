@@ -24,14 +24,13 @@ module Rat
     Window::initialize
     
     # Next, we need a few windows.
-    Rat::Input.new
-    Rat::Window.new :none, :main
+    Input.new
+    Window.new :none, :main
     
     forever do
       Rat::Input.process Ncurses.getch
     end
   end
   
+  Command.new(:exit) { exit }
 end
-
-Rat::Command.new(:exit) { exit }
