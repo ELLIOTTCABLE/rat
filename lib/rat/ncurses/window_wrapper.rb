@@ -32,14 +32,25 @@ module Ncurses
       @window.delwin unless @window.destroyed?
     end
     
+    def recreate opts = {}
+      terminate if @window
+      
+      @window = Ncurses.newwin(
+        opts[:height] ? @height = opts[:height] : @height,
+        opts[:width]  ? @width =  opts[:width]  : @width,
+        opts[:top]    ? @top =    opts[:top]    : @top,
+        opts[:left]   ? @left =   opts[:left]   : @left)
+      
+      @window.keypad true
+      refresh
+    end
+    
     # Re-creates the window itself, thus clearing all content. Optionally, can
     # subsequently fill the new window with new content.
-    def clear(content = nil)
-      terminate if @window
-      @window = Ncurses.newwin(@height, @width, @top, @left)
-      @window.keypad true
+    def clear content = nil
+      recreate
       self.print content if content
-      @window.refresh
+      refresh
     end
     
   end

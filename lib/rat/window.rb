@@ -1,4 +1,9 @@
 module Rat
+  # A +Rat+ '+Window+' is not a positioned window on the screen (like its
+  # parent +Ncurses::WINDOW+) - it's a content window in which one can chat
+  # with people or whatever. A list of 'open' windows is maintained, and the
+  # objects are preserved - but the actual +Ncurses::WINDOW+ is destroyed and
+  # only re-created when it's active.
   class Window < Ncurses::WindowWrapper
     @@windows = []
     # Returns a list of windows
@@ -32,8 +37,10 @@ module Rat
       @@active
     end
     
-    def self.activate window
-      window.activate
+    # Returns the number of 'available' lines in the terminal window. The
+    # total terminal lines minus the status bars and input window.
+    def self.available_height
+      Ncurses.LINES - Bar::height - 1
     end
     
     attr_reader :scrollback
@@ -41,12 +48,12 @@ module Rat
     attr_accessor :protocol
     
     def initialize protocol = nil, target = nil
-      raise 'You must initialize the environment first!' unless @@initialized
+      raise 'You must initialize the environment first!' unless Window::initialized?
       @scrollback = []
       @target = target
       
       # height, width, top, left - defaults to all but one line tall
-      super Ncurses.LINES - 1, Ncurses.COLS, 0, 0
+      super Window::available_height, Ncurses.COLS, 0, 0
       
       @@windows << self
       
@@ -110,7 +117,7 @@ module Rat
     # Re-set a window, clearing any content and re-printing the scrollback to
     # the new window.
     def reset
-      clear
+      recreate :height => Window::available_height
       @window.scrollok(true)
       @scrollback.each do |time, line|
         self.print("[#{timestamp time}] #{line}\n") # +#puts+ would refresh

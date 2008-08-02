@@ -5,6 +5,7 @@ require 'rat/command'
 require 'rat/protocol'
 require 'rat/protocols'
 require 'rat/ncurses'
+require 'rat/bar'
 require 'rat/window'
 require 'rat/input'
 
