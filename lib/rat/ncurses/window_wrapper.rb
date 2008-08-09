@@ -18,13 +18,20 @@ module Ncurses
       refresh
     end
     
+    # Implement this correctly for manual newlines and lines > window width
     def print string, indent = 0
-      first = true # I WANT ARRAY#MAP_WITH_INDEX!
-      string = string.gsub(/.{1,#{@width - 1 - indent}}/m) do |sect|
-        sect = first ? sect : "\n" + (' ' * indent) + sect
+      first = true
+      string = string.gsub(/[^\n]{1,#{@width - 1 - indent}}/m) do |sect|
+        sect = first ? sect : "\n" + sect
         first = false
         sect
       end
+      string = string.gsub(/.*\n?/) do |line|
+        sect = first ? sect : "\n" + (' ' * indent) + line
+        sect
+      end
+      
+      
       @window.printw("%s", string)
     end
     

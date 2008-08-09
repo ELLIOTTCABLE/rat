@@ -5,9 +5,15 @@ require 'rat/command'
 require 'rat/protocol'
 require 'rat/protocols'
 require 'rat/ncurses'
-require 'rat/bar'
+# require 'rat/bar'
 require 'rat/window'
 require 'rat/input'
+
+class Rat::Bar
+  def self.height
+    1
+  end
+end
 
 module Rat
   Version = -1
@@ -26,7 +32,8 @@ module Rat
     
     # Next, we need a few windows.
     Input.new
-    Window.new :none, :main
+    window = Window.new :none, :main
+    window << "<:3 )~~~ welcome to rat <:3 )~~~"
     
     forever do
       Rat::Input.process Ncurses.getch
