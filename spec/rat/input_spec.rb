@@ -1,6 +1,6 @@
-($:.unshift File.expand_path(File.join( File.dirname(__FILE__), '..', '..', '..', 'lib' ))).uniq!
+require File.dirname(__FILE__) + '/../spec_helper'
 require 'rat/ncurses/window_wrapper'
-require 'rat/input_window'
+require 'rat/input'
 
 # This spec doesn't actually work - it wants to use Ncurses, yet we can't
 # actually utilize that, or even mock the functionality, without initializing
