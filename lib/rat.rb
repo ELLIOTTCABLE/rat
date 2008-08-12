@@ -16,7 +16,7 @@ class Rat::Bar
 end
 
 module Rat
-  Version = -1
+  VERSION = -1
   
   # The primary method. Initiates the application loop, and takes over the
   # terminal.
