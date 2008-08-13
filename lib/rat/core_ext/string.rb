@@ -25,6 +25,11 @@ class String
     end
   end
   
+  # Ruby 1.8's #length doesn't like multibyte Unicode. Thanks Mikael Høilund!
+  def length
+    self.scan(/./um).size
+  end
+  
   # Simply returns an array of two string pieces split at +length+.
   def split_at length
     self.scan /.{1,#{length}}/
