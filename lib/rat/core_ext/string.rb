@@ -7,8 +7,8 @@ class String
   # TitleCase, however necessary
   def constantize
     str = self
-    str = str.gsub /\s/, '_'
-    str = str.gsub(/(^|_)(\w)/) { "#{$2.capitalize}" }
+    str = str.gsub /\s/u, '_'
+    str = str.gsub(/(^|_)(\w)/u) { "#{$2.capitalize}" }
   end
   
   def /(o)
@@ -32,7 +32,7 @@ class String
   
   # Simply returns an array of two string pieces split at +length+.
   def split_at length
-    self.scan /.{1,#{length}}/
+    self.scan /.{1,#{length}}/u
   end
   
   # Wraps a string, *intelligently*
