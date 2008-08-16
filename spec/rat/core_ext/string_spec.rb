@@ -24,21 +24,21 @@ describe String do
 
   describe '#wrap' do
     it "should split a string as close to the boundary as possible" do
-      string = "This is a string."
+      string = "This is a string"
       wrapped = string.wrap(10)
-      wrapped.should == "This is a \nstring."
+      wrapped.should == "This is a \nstring"
     end
     
     it "should split a word if no natural split is available" do
-      string = "pneumonoultramicroscopicsilicovolcanokoniosis"
+      string = "Pneumonoultramicroscopicsilicovolcanokoniosis"
       wrapped = string.wrap(15)
-      wrapped.should == "pneumonoultrami\ncroscopicsilico\nvolcanokoniosis"
+      wrapped.should == "Pneumonoultrami\ncroscopicsilico\nvolcanokoniosis"
     end
     
     it "should prefer to split a word if the nearest natural split is too far from the boundary" do
-      string = "this was pneumonoultramicroscopicsilicovolcanokoniosis"
+      string = "This was pneumonoultramicroscopicsilicovolcanokoniosis"
       wrapped = string.wrap(15)
-      wrapped.should == "this was pneumo\nnoultramicrosco\npicsilicovolcan\nokoniosis"
+      wrapped.should == "This was pneumo\nnoultramicrosco\npicsilicovolcan\nokoniosis"
     end
   end
 end

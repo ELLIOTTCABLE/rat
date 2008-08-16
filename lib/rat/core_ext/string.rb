@@ -66,5 +66,3 @@ class String
   end
   
 end
-
-p "a big fat pneumonoultramicroscopicsilicovolcanokoniosis".wrap(15)
