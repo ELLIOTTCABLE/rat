@@ -12,4 +12,13 @@ module Kernel
       exit
     end
   end
+  
+  # Execute some code without any warnings
+  def silently
+    old_verbose, $VERBOSE = $VERBOSE, nil
+    yield
+  ensure
+    $VERBOSE = old_verbose
+  end
+  
 end
