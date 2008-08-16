@@ -17,7 +17,7 @@ class String
   end
   
   def indent spaces
-    if spaces.respond_to? :to_s # duck,
+    if spaces.respond_to? :to_str # duck,
       self.split("\n").map {|s| [spaces, s].join }.join("\n")
     elsif spaces.respond_to? :to_i # duck,
       self.split("\n").map {|s| [(' ' * spaces), s].join }.join("\n")
@@ -31,7 +31,8 @@ class String
     self.scan(/./um).size
   end
   
-  # Simply returns an array of two string pieces split at +length+.
+  # Simply returns an array of string pieces split into groups of +length+
+  # characters.
   def split_at length
     self.scan /.{1,#{length}}/u
   end

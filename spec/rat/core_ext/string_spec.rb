@@ -2,6 +2,44 @@ require File.dirname(__FILE__) + '/../../spec_helper'
 require 'rat/core_ext/string'
 
 describe String do
+  describe "#constantize" do
+    it "should constantize a simple word" do
+      "test".constantize.should == "Test"
+    end
+    
+    it "should constantize a snake_case word" do
+      "snake_case".constantize.should == "SnakeCase"
+    end
+    
+    it "should constantize a simple string" do
+      "a simple string".constantize.should == "ASimpleString"
+    end
+  end
+  
+  describe "#/" do
+    it "should concatenate another string onto this string with File::SEPARATOR" do
+      ("abc" / "def").should == "abc#{File::SEPARATOR}def"
+    end
+  end
+  
+  describe "#lenght" do
+    it "should be UTF-8 safe" do
+      "‚ñ≤‚ñº‚ñ∂‚óÄ".length.should == 4
+      "‚ñÅ‚ñÇ‚ñÉ‚ñÑ‚ñÖ‚ñÜ‚ñá‚ñà".length.should == 8
+    end
+    
+    it "should be UTF-16 safe" do
+      pending("unsure how to manage this - most editors won't even print these right")
+      "Ì†¥Ì¥¢Ì†¥Ì¥û".length.should == 1
+    end
+  end
+  
+  describe "#split_at" do
+    it "should split a string into groups at a given length" do
+      'abcdefghijkl'.split_at(3).should == ['abc','def','ghi','jkl']
+    end
+  end
+  
   describe '#indent' do
     it "should indent a single-line string" do
       string = 'abcdef'
@@ -9,9 +47,15 @@ describe String do
       indented.should == '  abcdef'
     end
   
-    it "should indent a multi-line string" do
+    it "should indent a multi-line string using another string" do
       string = "abcdef\nghijkl"
-      indented = string.indent('  ')
+      indented = string.indent('- ')
+      indented.should == "- abcdef\n- ghijkl"
+    end
+    
+    it "should indent a multi-line string using a width" do
+      string = "abcdef\nghijkl"
+      indented = string.indent(2)
       indented.should == "  abcdef\n  ghijkl"
     end
   
@@ -19,6 +63,11 @@ describe String do
       string = "begin\n  puts 'whee!'\nend"
       indented = string.indent('  ')
       indented.should == "  begin\n    puts 'whee!'\n  end"
+    end
+    
+    it "should raise if incorrectly duck punched" do
+      lambda { "a string".indent(2..4) }.should raise_error ArgumentError,
+        "2..4 is neither string-ish nor numeric-ish"
     end
   end
 
