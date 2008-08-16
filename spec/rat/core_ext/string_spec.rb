@@ -23,18 +23,22 @@ describe String do
   end
 
   describe '#wrap' do
-    it "should wrap a long, continuous string at `width`" do
-      string = '0123456789' * 3
+    it "should split a string as close to the boundary as possible" do
+      string = "This is a string."
       wrapped = string.wrap(10)
-      wrapped.should == "0123456789\n0123456789\n0123456789"
+      wrapped.should == "This is a \nstring."
     end
-  
-    it "should wrap a sentence at the last word boundary before `width`" do
-      string =  'The quick blue merle Tucker ' + # Jumped would make this 34 characters, so it should wrap
-                'jumped over the mean black and ' +
-                'white Jazz.'
-      wrapped = string.wrap(30)
-      wrapped.should == "The quick blue merle Tucker \njumped over the mean black and \nwhite Jazz."
+    
+    it "should split a word if no natural split is available" do
+      string = "pneumonoultramicroscopicsilicovolcanokoniosis"
+      wrapped = string.wrap(15)
+      wrapped.should == "pneumonoultrami\ncroscopicsilico\nvolcanokoniosis"
+    end
+    
+    it "should prefer to split a word if the nearest natural split is too far from the boundary" do
+      string = "this was pneumonoultramicroscopicsilicovolcanokoniosis"
+      wrapped = string.wrap(15)
+      wrapped.should == "this was pneumo\nnoultramicrosco\npicsilicovolcan\nokoniosis"
     end
   end
 end
