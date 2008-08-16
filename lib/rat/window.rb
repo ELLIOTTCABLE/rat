@@ -4,7 +4,7 @@ module Rat
   # with people or whatever. A list of 'open' windows is maintained, and the
   # objects are preserved - but the actual +Ncurses::WINDOW+ is destroyed and
   # only re-created when it's active.
-  class Window < Ncurses::WindowWrapper
+  class Window < ::Ncurses::WindowWrapper
     @@windows = []
     # Returns a list of windows
     def self.windows
@@ -14,14 +14,14 @@ module Rat
     # Not to be confused with +Ncurses::WindowWrapper#initialize+ or
     # +Window#initialize+, this sets up Ncurses for use.
     def self.initialize
-      at_exit { Ncurses.endwin }
+      at_exit { ::Ncurses.endwin }
       
-      Ncurses.initscr
-      Ncurses.cbreak
-      Ncurses.keypad(Ncurses.stdscr, true)
-      Ncurses.noecho
-      Ncurses.refresh
-      Ncurses.start_color if Ncurses.has_colors?
+      ::Ncurses.initscr
+      ::Ncurses.cbreak
+      ::Ncurses.keypad(::Ncurses.stdscr, true)
+      ::Ncurses.noecho
+      ::Ncurses.refresh
+      ::Ncurses.start_color if ::Ncurses.has_colors?
       
       @@initialized = true
     end
@@ -40,7 +40,7 @@ module Rat
     # Returns the number of 'available' lines in the terminal window. The
     # total terminal lines minus the status bars and input window.
     def self.available_height
-      Ncurses.LINES - Bar::height - 1
+      ::Ncurses.LINES - Bar::height - 1
     end
     
     attr_reader :scrollback
@@ -53,7 +53,7 @@ module Rat
       @target = target
       
       # height, width, top, left - defaults to all but one line tall
-      super Window::available_height, Ncurses.COLS, 0, 0
+      super Window::available_height, ::Ncurses.COLS, 0, 0
       
       @@windows << self
       

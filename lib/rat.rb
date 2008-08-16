@@ -36,7 +36,7 @@ module Rat
     window << "<:3 )~~~ welcome to rat <:3 )~~~"
     
     forever do
-      Rat::Input.process Ncurses.getch
+      Rat::Input.process ::Ncurses.getch
     end
   end
   

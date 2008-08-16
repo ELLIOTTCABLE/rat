@@ -1,4 +1,4 @@
-module Ncurses
+module ::Ncurses
   class WindowWrapper
     
     attr_reader :window
@@ -42,7 +42,7 @@ module Ncurses
     def recreate opts = {}
       terminate if @window
       
-      @window = Ncurses.newwin(
+      @window = ::Ncurses.newwin(
         opts[:height] ? @height = opts[:height] : @height,
         opts[:width]  ? @width =  opts[:width]  : @width,
         opts[:top]    ? @top =    opts[:top]    : @top,

@@ -1,5 +1,5 @@
 module Rat
-  class Bar < Ncurses::WindowWrapper
+  class Bar < ::Ncurses::WindowWrapper
     @@bars = []
     def self.bars
       @@bars
@@ -13,7 +13,7 @@ module Rat
     # Refreshes the whole statusbar, re-sorting the the bars and refreshing
     # them in turn.
     def self.refresh
-      Bar::hash Ncurses::COLS
+      Bar::hash ::Ncurses::COLS
       
       @@bars.each {|b| b.refresh }
     end

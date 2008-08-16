@@ -1,5 +1,5 @@
 module Rat
-  class Input < Ncurses::WindowWrapper
+  class Input < ::Ncurses::WindowWrapper
     
     @@instance = nil
     def self.instance
@@ -8,11 +8,11 @@ module Rat
     
     def self.process key
       case key
-      when Ncurses::KEY_RESIZE # SIGWINCH - window resized
+      when ::Ncurses::KEY_RESIZE # SIGWINCH - window resized
         # TODO: Implement this
         
       when 27 # Escape          ---- ---- ---- ---- ---- ---- ---- ---- ---- #
-        Command.hotkey Ncurses.getch
+        Command.hotkey ::Ncurses.getch
         
       when 127, 263 # Backspace      ---- ---- ---- ---- ---- ---- ---- ---- #
         @@instance.buffer = @@instance.buffer[0..-2] # Strip the last character
@@ -65,7 +65,7 @@ module Rat
       @index = nil
       
       # height, width, top, left - defaults to one line tall
-      super 1, Ncurses.COLS, Ncurses.LINES - 1, 0
+      super 1, ::Ncurses.COLS, ::Ncurses.LINES - 1, 0
     end
     
     # Concatenates a string to the end of the current buffer.
