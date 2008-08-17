@@ -13,26 +13,13 @@ module ::Ncurses
       @window.refresh
     end
     
+    def print string, indent = 0
+      @window.printw("%s", string.wrap(::Ncurses::COLS - indent).indent(indent))
+    end
+    
     def puts string, indent = 0, newline = "\n"
       self.print(string + newline, indent) if string
       refresh
-    end
-    
-    # Implement this correctly for manual newlines and lines > window width
-    def print string, indent = 0
-      first = true
-      string = string.gsub(/[^\n]{1,#{@width - 1 - indent}}/m) do |sect|
-        sect = first ? sect : "\n" + sect
-        first = false
-        sect
-      end
-      string = string.gsub(/.*\n?/) do |line|
-        sect = first ? sect : "\n" + (' ' * indent) + line
-        sect
-      end
-      
-      
-      @window.printw("%s", string)
     end
     
     def terminate
@@ -56,8 +43,10 @@ module ::Ncurses
     # subsequently fill the new window with new content.
     def clear content = nil
       recreate
-      self.print content if content
-      refresh
+      if content
+        self.print content
+        refresh
+      end
     end
     
   end
