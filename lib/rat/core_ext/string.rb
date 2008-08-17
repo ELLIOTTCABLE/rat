@@ -51,8 +51,8 @@ class String
     min ||= (width.to_i * 0.75).to_i # Default to about a third of the full width
     raise ArgumentError, "#{min} is not numeric-ish" unless min.respond_to? :to_i
     
-    wrapped = [""]
     self.fixed_split("\n").map do |line|
+      wrapped = [""]
       line.enumerate do |word|
         if wrapped.last.length + word.rstrip.length <= width
           wrapped.last << word
@@ -69,9 +69,9 @@ class String
           bits = word.split_at(width)
           bits.each {|bit| wrapped << bit}
         end
-      end.join("\n")
-    end
-    wrapped.join("\n")
+      end
+      wrapped.join("\n")
+    end.join("\n")
   end
   
 end

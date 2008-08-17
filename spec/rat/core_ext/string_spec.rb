@@ -107,5 +107,11 @@ describe String do
       wrapped = string.wrap(15)
       wrapped.should == "This was pneumo\nnoultramicrosco\npicsilicovolcan\nokoniosis"
     end
+    
+    it "should correctly handle line returns" do
+      string = "\n  \n  This is a string\n  "
+      wrapped = string.wrap(10)
+      wrapped.should == "\n  \n  This is \na string\n  "
+    end
   end
 end
