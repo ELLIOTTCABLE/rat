@@ -18,9 +18,9 @@ class String
   
   def indent spaces
     if spaces.respond_to? :to_str # duck,
-      self.split("\n").map {|s| [spaces, s].join }.join("\n")
+      self.fixed_split("\n").map {|s| [spaces, s].join }.join("\n")
     elsif spaces.respond_to? :to_i # duck,
-      self.split("\n").map {|s| [(' ' * spaces), s].join }.join("\n")
+      self.fixed_split("\n").map {|s| [(' ' * spaces), s].join }.join("\n")
     else # goose!
       raise ArgumentError, "#{spaces} is neither string-ish nor numeric-ish"
     end
@@ -29,6 +29,14 @@ class String
   # Ruby 1.8's #length doesn't like multibyte Unicode. Thanks Mikael Høilund!
   def length
     self.scan(/./um).size
+  end
+  
+  # Ruby 1.8's #split method doesn't like for the last character to be an
+  # instance of the seperator
+  def fixed_split *args
+    arr = self.split *args
+    arr << "" if self != '' and self[-1].chr == args.first
+    arr
   end
   
   # Simply returns an array of string pieces split into groups of +length+
@@ -44,7 +52,7 @@ class String
     raise ArgumentError, "#{min} is not numeric-ish" unless min.respond_to? :to_i
     
     wrapped = [""]
-    self.split("\n").map do |line|
+    self.fixed_split("\n").map do |line|
       line.enumerate do |word|
         if wrapped.last.length + word.rstrip.length <= width
           wrapped.last << word

@@ -22,7 +22,7 @@ describe String do
     end
   end
   
-  describe "#lenght" do
+  describe "#length" do
     it "should be UTF-8 safe" do
       "‚ñ≤‚ñº‚ñ∂‚óÄ".length.should == 4
       "‚ñÅ‚ñÇ‚ñÉ‚ñÑ‚ñÖ‚ñÜ‚ñá‚ñà".length.should == 8
@@ -31,6 +31,12 @@ describe String do
     it "should be UTF-16 safe" do
       pending("unsure how to manage this - most editors won't even print these right")
       "Ì†¥Ì¥¢Ì†¥Ì¥û".length.should == 1
+    end
+  end
+  
+  describe "#fixed_split" do
+    it "should work correctly when the last character is the same as the seperator" do
+      '.a.b.c.'.fixed_split('.').should == ['','a','b','c','']
     end
   end
   
@@ -59,10 +65,22 @@ describe String do
       indented.should == "  abcdef\n  ghijkl"
     end
   
-    it "should preserve whitespace" do
+    it "should preserve inline whitespace" do
       string = "begin\n  puts 'whee!'\nend"
       indented = string.indent('  ')
       indented.should == "  begin\n    puts 'whee!'\n  end"
+    end
+    
+    it "should preserve prefixed whitespace" do
+      string = "\nI am low"
+      indented = string.indent('  ')
+      indented.should == "  \n  I am low"
+    end
+    
+    it "should preserve postfixed whitespace" do
+      string = "I am high\n"
+      indented = string.indent('  ')
+      indented.should == "  I am high\n  "
     end
     
     it "should raise if incorrectly duck punched" do
