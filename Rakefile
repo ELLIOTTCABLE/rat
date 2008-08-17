@@ -55,6 +55,7 @@ ensure
       t.spec_files = Dir['spec/**/*_spec.rb'].sort
       t.libs = ['lib']
       t.rcov = true
+      t.rcov_opts = ['--exclude-only', '".*"', '--include-file', '^lib']
       t.rcov_dir = 'meta' / 'coverage'
     end
 
@@ -68,8 +69,9 @@ ensure
     end
 
     RCov::VerifyTask.new(:verify) do |t|
-      t.threshold = 100
+      t.threshold = 75
       t.index_html = 'meta' / 'coverage' / 'index.html'
+      t.require_exact_threshold = false
     end
 
     task :open do
@@ -84,7 +86,7 @@ ensure
   end
 
   desc 'Check everything over before commiting'
-  task :aok => [:'echoe:manifest', :'rcov:run', :'rcov:verify', :'rcov:ratio', :'rcov:open', :'git:status']
+  task :aok => [:'echoe:manifest', :'rcov:run', :'rcov:verify', :'rcov:open', :'git:status']
 
   # desc 'Task run during continuous integration' # Invisible
   task :cruise => [:'rcov:plain', :'rcov:verify', :'rcov:ratio']
