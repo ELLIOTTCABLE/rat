@@ -14,7 +14,7 @@ module ::Ncurses
     end
     
     def print string, indent = 0
-      @window.printw("%s", string.wrap(::Ncurses::COLS - indent).indent(indent))
+      @window.printw("%s", string.wrap(::Ncurses.COLS - indent).indent(indent))
     end
     
     def puts string, indent = 0, newline = "\n"
