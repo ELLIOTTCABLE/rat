@@ -3,7 +3,6 @@ require 'ncurses'
 require 'rat/core_ext'
 require 'rat/command'
 require 'rat/protocol'
-require 'rat/protocols'
 require 'rat/ncurses'
 # require 'rat/bar'
 require 'rat/window'
@@ -22,7 +21,7 @@ module Rat
   # terminal.
   def self.start
     # First, protocol initialization
-    # Protocol::Protocols.each {|protocol| protocol::initialize }
+    Protocol::initialize
     
     # Second, some Ncurses initialization
     Window::initialize

@@ -11,10 +11,9 @@ lib/rat/input.rb
 lib/rat/ncurses/window_wrapper.rb
 lib/rat/ncurses.rb
 lib/rat/protocol.rb
-lib/rat/protocols/xmpp.rb
-lib/rat/protocols.rb
 lib/rat/window.rb
 lib/rat.rb
+protocols/xmpp.rb
 Rakefile
 README.mkdn
 spec/rat/core_ext/string_spec.rb
