@@ -26,29 +26,18 @@ module Rat
     
     # Second, some Ncurses initialization
     Window::initialize
-    rodent = Ncurses::WindowWrapper.new 1, 26, (Ncurses.LINES * 0.25).to_i, (Ncurses.COLS / 2) - 13
-    %w"o/ o\\ o/ o\\ o/".each {|frame| rodent.clear frame + ' '; sleep 0.5 }
-    rodent.clear " (-: "
-    sleep 1
-    rodent.clear " (-: welcome to rat :-) "
-    sleep 2
     
     # Next, we need a few windows.
     Input.new
     window = Window.new :none, :main
     
-    rodent.terminate
     forever do
       Rat::Input.process ::Ncurses.getch
     end
   end
   
   Command.new(:exit) do
-    rodent = Ncurses::WindowWrapper.new 1, 26, (Ncurses.LINES * 0.25).to_i, (Ncurses.COLS / 2) - 13
-    %w"o/ o\\ o/ o\\ o/".each {|frame| rodent.clear frame + ' '; sleep 0.5 }
-    rodent.clear " :-( bye bye )-: "
-    sleep 1
-    # Protocol::Protocols.each {|protocol| protocol::terminate }/
+    # Protocol::Protocols.each {|protocol| protocol::terminate }
     exit
   end
 end
