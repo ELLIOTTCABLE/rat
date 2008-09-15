@@ -19,6 +19,7 @@ Rakefile
 README.mkdn
 spec/rat/core_ext/string_spec.rb
 spec/rat/input_spec.rb
+spec/rat/ncurses/ncurses_mock.rb
 spec/rat/ncurses/window_wrapper_spec.rb
 spec/spec_helper.rb
 .manifest
