@@ -69,7 +69,7 @@ ensure
     end
 
     RCov::VerifyTask.new(:verify) do |t|
-      t.threshold = 75
+      t.threshold = 50
       t.index_html = 'meta' / 'coverage' / 'index.html'
       t.require_exact_threshold = false
     end
