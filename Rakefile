@@ -1,9 +1,11 @@
 ($:.unshift File.expand_path(File.join( File.dirname(__FILE__), 'lib' ))).uniq!
 require 'rat'
 require 'rake'
-require 'rake/rdoctask'
+require 'yard'
+require 'yard/rake/yardoc_task'
 require 'spec/rake/spectask'
 require 'spec/rake/verify_rcov'
+require 'stringray/core_ext/spec/rake/verify_rcov'
 
 begin
   require 'echoe'
@@ -79,15 +81,34 @@ ensure
     end
   end
   
+  namespace :yard do
+    YARD::Rake::YardocTask.new :generate do |t|
+      t.files   = ['lib/**/*.rb']
+      t.options = ['--output-dir', "meta/documentation", '--readme', 'README.mkdn']
+    end
+    
+    YARD::Rake::YardocTask.new :dot_yardoc do |t|
+      t.files   = ['lib/**/*.rb']
+      t.options = ['--no-output', '--readme', 'README.mkdn']
+    end
+    
+    task :open do
+      system 'open ' + 'meta' / 'documentation' / 'index.html' if PLATFORM['darwin']
+    end
+  end
+  
   namespace :git do
     task :status do
       `git status`
     end
   end
-
+  
   desc 'Check everything over before commiting'
-  task :aok => [:'echoe:manifest', :'rcov:run', :'rcov:verify', :'rcov:open', :'git:status']
+  task :aok => [:'yard:generate', :'yard:open',
+                :'echoe:manifest',
+                :'rcov:run', :'rcov:verify', :'rcov:open',
+                :'git:status']
 
   # desc 'Task run during continuous integration' # Invisible
-  task :cruise => [:'rcov:plain', :'rcov:verify', :'rcov:ratio']
+  task :ci => [:'yard:generate', :'rcov:plain', :'rcov:verify']
 end
