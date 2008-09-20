@@ -16,7 +16,7 @@ begin
       g.email = ['rat@elliottcable.com']
       g.summary = 'Flexible terminal messaging (IM/IRC) client'
       g.url = 'http://github.com/elliottcable/rat'
-      g.dependencies = ['stringray >=2', 'ncurses']
+      g.dependencies = ['stringray >=2', 'ncurses'] #, 'yard >=0.2.3'
       g.manifest_name = '.manifest'
       g.ignore_pattern = ['.git', 'meta', 'logs', 'stringray.gemspec']
     end
