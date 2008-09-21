@@ -18,7 +18,7 @@ begin
       g.url = 'http://github.com/elliottcable/rat'
       g.dependencies = ['stringray >=2', 'ncurses'] #, 'yard >=0.2.3'
       g.manifest_name = '.manifest'
-      g.ignore_pattern = ['.git', 'meta', 'logs', 'stringray.gemspec']
+      g.ignore_pattern = /^\.git\/|^meta\/|^logs\/|\.gemspec/
     end
   
     desc 'tests packaged files to ensure they are all present'
