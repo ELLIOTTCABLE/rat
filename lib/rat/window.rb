@@ -17,8 +17,9 @@ module Rat
       at_exit { ::Ncurses.endwin }
       
       ::Ncurses.initscr
-      ::Ncurses.cbreak
-      ::Ncurses.keypad(::Ncurses.stdscr, true)
+      # ::Ncurses.cbreak
+      # ::Ncurses.keypad(::Ncurses.stdscr, true)
+      ::Ncurses.nocbreak
       ::Ncurses.noecho
       ::Ncurses.refresh
       ::Ncurses.start_color if ::Ncurses.has_colors?

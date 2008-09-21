@@ -1,4 +1,5 @@
 require 'ncurses'
+require 'highline/system_extensions' # http://blog.grayproductions.net/articles/i_just_want_one_character
 
 require 'rat/core_ext'
 require 'rat/command'
@@ -31,7 +32,7 @@ module Rat
     window = Window.new :none, :main
     
     forever do
-      Rat::Input.process ::Ncurses.getch
+      Rat::Input.process ::HighLine::SystemExtensions::get_character
     end
   end
   
