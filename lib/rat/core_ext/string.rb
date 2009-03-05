@@ -29,7 +29,7 @@ class String
   # Ruby 1.8's #length doesn't like multibyte Unicode. Thanks Mikael Høilund!
   def length
     self.scan(/./um).size
-  end
+  end if RUBY_VERSION <= "1.9"
   
   # Ruby 1.8's #split method doesn't like for the last character to be an
   # instance of the seperator
