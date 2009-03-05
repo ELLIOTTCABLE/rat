@@ -13,6 +13,7 @@ lib/rat/ncurses.rb
 lib/rat/protocol.rb
 lib/rat/window.rb
 lib/rat.rb
+Mockup.txt
 protocols/xmpp.rb
 Rakefile
 README.mkdn
