@@ -1,0 +1,6 @@
+For now, I can't get Ncurses 5.7 to compile on OS X Leopard. So we'll fall
+back to Ncurses 5.6.
+
+Ncurses `configure` string used:
+
+  ./configure --enable-widec --enable-sigwinch --enable-wgetch-events --enable-pthread
