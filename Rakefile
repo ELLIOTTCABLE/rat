@@ -112,3 +112,4 @@ ensure
   # desc 'Task run during continuous integration' # Invisible
   task :ci => [:'yard:generate', :'rcov:plain', :'rcov:verify']
 end
+
